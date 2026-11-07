@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Snake</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Snake</h1>
+
+  <div class="area-jogo">
+    <header class="painel">
+      <div class="vidas" aria-label="Vidas">❤️❤️❤️</div>
+      <div class="frutas" aria-label="Fruta em jogo">🍎</div>
+      <div class="info">
+        <button class="etiqueta" id="dificuldade">Fácil</button>
+        <button class="etiqueta" id="modo">Normal</button>
+      </div>
+      <button class="botao-play" id="botao-play">Play</button>
+    </header>
+
+    <div class="tabuleiro" role="img" aria-label="Tabuleiro do jogo da cobrinha"></div>
+  </div>
+
+  <div class="tela-morte" id="tela-morte">
+    <h2>Fim de jogo</h2>
+    <button id="botao-reiniciar">Jogar de novo</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

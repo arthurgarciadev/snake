@@ -1,0 +1,275 @@
+/* Cores e tamanho da grade em um só lugar, fácil de mudar */
+:root {
+  --noite: #0f2a4a;
+  --gelo: #d9f0ff;
+  --gelo-escuro: #bfe3fa;
+  --borda: #2f7fc1;
+  --neve: #ffffff;
+  --celulas: 20; /* o tabuleiro tem 20 x 20 quadradinhos */
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: radial-gradient(circle at 50% 0%, #2a5d92, var(--noite) 70%);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--neve);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  letter-spacing: 0.02em;
+}
+
+/* ===== Moldura: painel + tabuleiro com a mesma largura ===== */
+
+.area-jogo {
+  width: min(92vw, 560px, calc(100vh - 230px));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===== Painel (vidas, frutas, dificuldade/modo, botão) ===== */
+
+.painel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(150, 210, 255, 0.35);
+  border-radius: 12px;
+  box-shadow: inset 0 0 18px rgba(150, 210, 255, 0.12);
+}
+
+.vidas,
+.frutas {
+  font-size: 1.25rem;
+  letter-spacing: 0.12em;
+  min-height: 1.6em;   /* o painel não pula quando a lista fica vazia */
+  display: flex;
+  align-items: center;
+}
+
+.vidas { min-width: 4em; }
+
+.info {
+  display: flex;
+  gap: 8px;
+}
+
+.etiqueta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.25em 0.75em;
+  color: var(--gelo);
+  background: rgba(191, 227, 250, 0.16);
+  border: 1px solid rgba(191, 227, 250, 0.5);
+  border-radius: 999px;
+}
+
+.botao-play {
+  margin-left: auto;   /* empurra o botão para a direita */
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.55em 1.4em;
+  color: var(--noite);
+  background: linear-gradient(#f2fbff, var(--gelo-escuro));
+  border: 3px solid var(--borda);
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 0 10px rgba(255, 255, 255, 0.9),
+    0 4px 0 var(--borda);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.botao-play:hover { transform: translateY(-1px); }
+
+.botao-play:active {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 0 10px rgba(255, 255, 255, 0.9),
+    0 1px 0 var(--borda);
+}
+
+.botao-play:focus-visible {
+  outline: 3px solid var(--neve);
+  outline-offset: 3px;
+}
+
+/* Visual do botão quando o jogo está rodando ("Encerrar") */
+.botao-play.encerrar {
+  color: var(--neve);
+  background: linear-gradient(#2f7fc1, #1d5a94);
+  border-color: #124573;
+  box-shadow:
+    inset 0 0 10px rgba(255, 255, 255, 0.25),
+    0 4px 0 #124573;
+}
+
+/* ===== Tabuleiro ===== */
+
+.tabuleiro {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  container-type: inline-size;
+
+  /* Grade de verdade: 20 colunas e 20 linhas do mesmo tamanho */
+  display: grid;
+  grid-template-columns: repeat(var(--celulas), 1fr);
+  grid-template-rows: repeat(var(--celulas), 1fr);
+
+  border: 8px solid var(--borda);
+  border-radius: 12px;
+
+  /* Linhas brancas finas (a grade) sobre um fundo azul-claro gelado */
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.55) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.55) 1px, transparent 1px),
+    radial-gradient(circle at 30% 20%, #f2fbff, var(--gelo) 45%, var(--gelo-escuro));
+  background-size:
+    calc(100% / var(--celulas)) calc(100% / var(--celulas)),
+    calc(100% / var(--celulas)) calc(100% / var(--celulas)),
+    100% 100%;
+
+  /* Brilho de gelo por dentro e sombra por fora */
+  box-shadow:
+    inset 0 0 40px rgba(255, 255, 255, 0.9),
+    inset 0 0 8px rgba(47, 127, 193, 0.35),
+    0 0 0 3px rgba(255, 255, 255, 0.35),
+    0 0 60px rgba(150, 210, 255, 0.35),
+    0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+/* ===== Cobrinha ===== */
+
+.corpo,
+.cabeca {
+  background: #0b2e6b; /* azul-escuro */
+  border-radius: 30%;
+  margin: 1px;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.25),
+              inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+.cabeca {
+  background: #082250; /* um tom mais escuro para destacar a cabeça */
+  position: relative;
+}
+
+/* Os dois olhos, olhando para a direita */
+.cabeca::before,
+.cabeca::after {
+  content: "";
+  position: absolute;
+  right: 18%;
+  width: 20%;
+  height: 20%;
+  background: var(--neve);
+  border-radius: 50%;
+}
+.cabeca::before { top: 22%; }
+.cabeca::after  { bottom: 22%; }
+
+/* ===== Tela de morte ===== */
+
+.tela-morte {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 24px;
+  text-align: center;
+  background: rgba(15, 42, 74, 0.82);
+  backdrop-filter: blur(6px);
+}
+
+.tela-morte.ativa {
+  display: flex;
+  animation: aparecer 0.35s ease-out;
+}
+
+.tela-morte h2 {
+  margin: 0;
+  color: var(--neve);
+  font-size: clamp(2.25rem, 8vw, 4rem);
+  letter-spacing: 0.02em;
+  text-shadow:
+    0 0 24px rgba(150, 210, 255, 0.85),
+    0 4px 0 var(--borda);
+}
+
+.tela-morte button {
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 0.8em 1.9em;
+  color: var(--noite);
+  background: linear-gradient(#f2fbff, var(--gelo-escuro));
+  border: 4px solid var(--borda);
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 0 12px rgba(255, 255, 255, 0.9),
+    0 6px 0 var(--borda),
+    0 0 30px rgba(150, 210, 255, 0.45);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.tela-morte button:hover { transform: translateY(-2px); }
+
+.tela-morte button:active {
+  transform: translateY(4px);
+  box-shadow:
+    inset 0 0 12px rgba(255, 255, 255, 0.9),
+    0 2px 0 var(--borda),
+    0 0 30px rgba(150, 210, 255, 0.45);
+}
+
+.tela-morte button:focus-visible {
+  outline: 3px solid var(--neve);
+  outline-offset: 4px;
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tela-morte.ativa { animation: none; }
+}
+
+.fruta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.6cqw;  
+  line-height: 1;
+}
+
+.etiqueta {
+  font-family: inherit;
+  min-width: 5.5em;   
+  text-align: center;
+  cursor: pointer;
+}
+.etiqueta:hover { background: rgba(191, 227, 250, 0.28); }
+.etiqueta:disabled { opacity: 0.5; cursor: not-allowed; }
+.etiqueta:focus-visible { outline: 2px solid var(--neve); outline-offset: 2px; }
